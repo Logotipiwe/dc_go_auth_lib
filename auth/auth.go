@@ -21,7 +21,10 @@ func FetchUserData(r *http.Request) (DcUser, error) {
 	}
 
 	client := &http.Client{}
-	res, _ := client.Do(request)
+	res, err := client.Do(request)
+	if err != nil {
+		return DcUser{}, err
+	}
 	defer res.Body.Close()
 	var answer DcUser
 	err = json.NewDecoder(res.Body).Decode(&answer)
