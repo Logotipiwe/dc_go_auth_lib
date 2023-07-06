@@ -2,6 +2,7 @@ package auth
 
 import (
 	"encoding/json"
+	"github.com/logotipiwe/dc_go_utils/src/config"
 	"net/http"
 )
 
@@ -12,7 +13,9 @@ type DcUser struct {
 }
 
 func FetchUserData(r *http.Request) (DcUser, error) {
-	getUrl := "http://idp/getUser"
+	idpHost := config.GetConfig("IDP_HOST")
+	idpSubpath := config.GetConfig("IDP_SUBPATH")
+	getUrl := idpHost + idpSubpath + "/getUser"
 	println(getUrl)
 	request, _ := http.NewRequest("GET", getUrl, nil)
 	authCookie, err := r.Cookie("access_token")
