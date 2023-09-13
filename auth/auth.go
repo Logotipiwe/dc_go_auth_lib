@@ -2,6 +2,7 @@ package auth
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/logotipiwe/dc_go_utils/src/config"
 	"net/http"
 )
@@ -35,6 +36,15 @@ func FetchUserData(r *http.Request) (DcUser, error) {
 		return DcUser{}, err
 	}
 	return answer, nil
+}
+
+func AuthAsMachine(r *http.Request) error {
+	mToken := config.GetConfig("M_TOKEN")
+	providedToken := r.URL.Query().Get("mToken")
+	if mToken != providedToken {
+		return errors.New("not a machine")
+	}
+	return nil
 }
 
 func GetAccessTokenFromCookie(r *http.Request) (string, error) {
