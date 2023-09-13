@@ -49,7 +49,7 @@ func AuthAsMachine(r *http.Request) error {
 }
 
 // auth as machine
-func getUserDataById(userID string) (DcUser, error) {
+func GetUserDataById(userID string) (DcUser, error) {
 	idpHost := config.GetConfig("IDP_HOST")
 	idpSubpath := config.GetConfig("IDP_SUBPATH")
 	getUrl := idpHost + idpSubpath + "/get-user-by-id"
