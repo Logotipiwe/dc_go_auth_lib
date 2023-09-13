@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/logotipiwe/dc_go_utils/src/config"
 	"net/http"
+	"net/url"
 )
 
 type DcUser struct {
@@ -45,6 +46,33 @@ func AuthAsMachine(r *http.Request) error {
 		return errors.New("not a machine")
 	}
 	return nil
+}
+
+// auth as machine
+func getUserDataById(userID string) (DcUser, error) {
+	idpHost := config.GetConfig("IDP_HOST")
+	idpSubpath := config.GetConfig("IDP_SUBPATH")
+	getUrl := idpHost + idpSubpath + "/get-user-by-id"
+	println(getUrl)
+	request, _ := http.NewRequest("GET", getUrl, nil)
+
+	params := url.Values{}
+	params.Add("mToken", config.GetConfig("M_TOKEN"))
+	params.Add("userId", userID)
+	request.URL.RawQuery = params.Encode()
+
+	client := &http.Client{}
+	res, err := client.Do(request)
+	if err != nil {
+		return DcUser{}, err
+	}
+	defer res.Body.Close()
+	var answer DcUser
+	err = json.NewDecoder(res.Body).Decode(&answer)
+	if err != nil {
+		return DcUser{}, err
+	}
+	return answer, nil
 }
 
 func GetAccessTokenFromCookie(r *http.Request) (string, error) {
